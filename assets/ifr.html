@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang=“ja”>
+  <head>
+    <meta charset=“UTF-8”>
+    <title>_</title>
+
+  </head>
+  
+  <body id = "main">
+    <div style="display:inline-flex; ">
+   
+      <select style="border-radius: 5px; background-color: transparent" name="platf" id = "pl">
+        <option value="https://www.youtube.com/embed/">https://www.youtube.com/watch?v=</option>
+        <option value="https://embed.nicovideo.jp/watch/sm">https://www.nicovideo.jp/watch/sm</option>
+        
+      </select><input style="border-radius: 5px; background-color: transparent; border: solid 1px black;" id="url" type="text" width="300">
+    
+    <p>幅</p><input style="border-radius: 5px; background-color: transparent; border: solid 1px black;" id="w" type="text" value="640">
+    <p> 高さ </p><input style="border-radius: 5px; background-color: transparent; border: solid 1px black;" id="h" type="text" value="360">
+    <button style="padding: 10px; border: solid 1px black; background-color:lime; border-radius: 5px; margin-left: 5px;" onclick="newURL()">再生</button>
+  </div>  
+    <br>
+    <iframe style="border-radius: 8px; background-color: transparent; border: solid 1px black; margin-top: 5px;"  id="ifr" width="640" height="360" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <script language="JavaScript">
+      function newURL()
+      {
+      let element = document.getElementById('url');
+      document.getElementById("ifr").src = document.getElementById("pl").value + 				document.getElementById("url").value;
+      document.getElementById("ifr").width = document.getElementById("w").value;
+      document.getElementById("ifr").height = document.getElementById("h").value;
+      }
+      document.getElementById("main").addEventListener('keypress', isEnterPressed);
+      function isEnterPressed(e) {
+  	if (e.keyCode === 13) {
+		newURL();
+	} 
+		return false;
+}
+      </script>
+  </body>
+</html>
