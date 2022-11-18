@@ -51,7 +51,7 @@
             var text = document.getElementById('sendInput').value;
             document.getElementById('sendInput').value = "";
             //document.getElementById("outputarea").textContent =
-            addSerial("TX> "+text);
+            addSerial("TX> "+text+"\n");
             const encoder = new TextEncoder();
             const writer = port.writable.getWriter();
             await writer.write(encoder.encode(text + "\n"));
