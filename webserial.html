@@ -18,7 +18,8 @@
 
                 while (port.readable) {
                     const reader = port.readable.getReader();
-
+                    document.getElementById("connect").className = "btn btn-success"
+                    document.getElementById("connect").textContent = "Connected"
                     try {
                         while (true) {
                             const { value, done } = await reader.read();
@@ -62,7 +63,7 @@
 <body>
     <div class="container-fluid">
         <h1>WebSerial API Console</h1>
-        <button class="btn btn-primary" onclick="onConnectButtonClick()">Connect</button> baud<select name="baudrate"><option>110</option>
+        <button id="connect" class="btn btn-primary" onclick="onConnectButtonClick()">Connect</button> baud<select name="baudrate"><option>110</option>
             <option>300</option>
             <option>600</option>
             <option>1200</option>
