@@ -8,22 +8,30 @@
     <title>WebSerial API Console</title>
     <script>
         let port;
-
+        const paritys = Object.freeze({
+            none: 0,
+            even: 1,
+            odd: 2
+        });
         async function onConnectButtonClick() {
             try {
                 port = await navigator.serial.requestPort();
-                baud = Number(document.getElementById("baudrate"));
-                db = Number(document.getElementById("db"));
-                sb = Number(document.getElementById("sb"));
-                par = (document.getElementById("par"));
-                fc = (document.getElementById("fc"));
+                baud = Number(document.getElementById("baudrate").textContent.split("\n")[(document.getElementById("baudrate")).selectedIndex])
+                db = Number(document.getElementById("db").textContent[(document.getElementById("db")).selectedIndex]);
+                sb = Number(document.getElementById("sb").textContent[(document.getElementById("sb")).selectedIndex]);
+                par = document.getElementById("par").textContent.replace(/ /g,"").split("\n")[(document.getElementById("par")).selectedIndex]
+                fc = document.getElementById("fc").textContent.replace(/ /g,"").split("\n")[(document.getElementById("fc")).selectedIndex]
+                bufs = Number(document.getElementById("baudrate").value)
 
-                await port.open({ baudRate: baud,dataBits: db, stopBits: sb,parity:  par,flowControl: fc});
+
+
+                await port.open({ baudRate: baud,dataBits: db, stopBits: sb,parity:  par,flowControl: fc, bufferSize: bufs});
 
                 while (port.readable) {
                     const reader = port.readable.getReader();
                     document.getElementById("connect").className = "btn btn-success"
                     document.getElementById("connect").textContent = "Connected"
+                    addSerial("Successfully connected to device.")
                     try {
                         while (true) {
                             const { value, done } = await reader.read();
@@ -55,19 +63,27 @@
             var text = document.getElementById('sendInput').value;
             document.getElementById('sendInput').value = "";
             //document.getElementById("outputarea").textContent =
-            addSerial("TX> "+text+"\n");
+            addSerial("> "+text+"\n");
             const encoder = new TextEncoder();
             const writer = port.writable.getWriter();
             await writer.write(encoder.encode(text + "\n"));
             writer.releaseLock();
         }
+    var btn = document.getElementById('sendInput');
+
+    // Enterキー押下時、送信処理が実行する
+    window.document.onkeydown = function(event){
+        if (event.key === 'Enter') {
+            sendSerial();
+        }
+    }
     </script>
 </head>
 
 <body>
     <div class="container-fluid" data-bs-theme="dark">
         <h1>WebSerial API Console</h1>
-        <button id="connect" class="btn btn-primary" onclick="onConnectButtonClick()">Connect</button> baud<select name="baudrate" class="btn btn-secondary dropdown-toggle"><option>110</option>
+        <button id="connect" class="btn btn-primary" onclick="onConnectButtonClick()">Connect</button> baud<select id="baudrate" name="baudrate" class="btn btn-secondary dropdown-toggle"><option>110</option>
             <option>300</option>
             <option>600</option>
             <option>1200</option>
@@ -81,16 +97,20 @@
             <option selected>115200</option>
             <option>128000</option>
             <option>256000</option>
-        </select> dataBits <select name="db"class="btn btn-secondary dropdown-toggle"><option>7</option><option selected>8</option></select> stopBits <select name="sb" class="btn btn-secondary dropdown-toggle"><option selected>1</option><option>2</option></select> parity <select name="par" class="btn btn-secondary dropdown-toggle"><option>none</option selected><option>even</option><option>odd</option></select> flowControl <select name="fc" class="btn btn-secondary dropdown-toggle"><option>none</option selected><option>hardware</option></select>
-            
+        </select> dataBits <select name="db" id="db" class="btn btn-secondary dropdown-toggle"><option>7</option><option selected>8</option></select> stopBits <select name="sb" id="sb" class="btn btn-secondary dropdown-toggle"><option selected>1</option><option>2</option></select> parity <select id="par" name="par" class="btn btn-secondary dropdown-toggle"><option>none</option selected>
+            <option>even</option>
+            <option>odd</option></select> flowControl <select id="fc" name="fc" class="btn btn-secondary dropdown-toggle"><option>none</option selected>
+                <option>hardware</option>
+            </select> bufferSize <input class="btn btn-secondary spinbox-input" type="number" value="255">
+
         <br />
-        <div style="" class="w-50">
-            <input type="text" id="sendInput" class="form-control"/>
-        </div><div style=""> <input type="button" value="Send" class="btn btn-success" onclick="sendSerial();" /></div>
+        <div class="w-100" style="display: inline-flex;">
+            <input type="text" id="sendInput" class="form-control"/> <input id="sendInput" type="button" value="Send" class="btn btn-success" onclick="sendSerial();" />
+            </div>
            
         
-        <br>
-        <textarea cols="80" rows="12" id="outputArea" readonly style="font-family:'Courier New', Courier, monospace"></textarea>
+        
+        <textarea class="form-control" cols="80" rows="12" id="outputArea" readonly style="font-family: 'Courier New', Courier, monospace"></textarea>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     </div>
 </body>
